@@ -87,9 +87,31 @@ if "selected_teknik" in st.experimental_get_query_params():
     st.session_state.selected_teknik = st.experimental_get_query_params()["selected_teknik"][0]
 
 # Tata Letak Kolom
-col1, col2 = st.columns([3, 1])  # Kolum kiri lebih lebar daripada kolum kanan
+col1, col2 = st.columns([1, 3])  # Kolum kiri lebih sempit daripada kolum kanan
 
 with col1:
+    st.header("Tutorial")
+    st.write("## Selamat Datang ke Aplikasi Penulisan Karangan")
+    st.write("Gunakan editor teks di sebelah kanan untuk menulis karangan Anda.")
+    st.write("Pilih teknik penulisan dari ikon di atas.")
+    st.write("Klik 'Gabungkan Karangan' untuk melihat hasil gabungan.")
+    
+    # Video Tutorial dari YouTube
+    st.write("### Video Tutorial")
+    st.write("Tonton video di bawah untuk panduan lengkap:")
+
+    # Gunakan iframe untuk memaparkan video YouTube
+    video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
+    components.iframe(video_url, height=300)
+
+    # Nota tambahan
+    st.write("""
+    **Nota:**
+    - Pastikan anda menyimpan karangan sebelum menutup aplikasi.
+    - Jika anda mempunyai sebarang pertanyaan, sila rujuk video tutorial di atas.
+    """)
+
+with col2:
     # Paparan Teknik yang Dipilih
     selected_teknik = st.session_state.selected_teknik
     warna_teknik = teknik_info[selected_teknik]["warna"]
@@ -251,28 +273,6 @@ with col1:
         # Butang untuk menyimpan ke database
         if st.button("Simpan ke Database"):
             simpan_ke_database()
-
-with col2:
-    st.header("Tutorial")
-    st.write("## Selamat Datang ke Aplikasi Penulisan Karangan")
-    st.write("Gunakan editor teks di sebelah kiri untuk menulis karangan Anda.")
-    st.write("Pilih teknik penulisan dari ikon di atas.")
-    st.write("Klik 'Gabungkan Karangan' untuk melihat hasil gabungan.")
-    
-    # Video Tutorial dari YouTube
-    st.write("### Video Tutorial")
-    st.write("Tonton video di bawah untuk panduan lengkap:")
-
-    # Gunakan iframe untuk memaparkan video YouTube
-    video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
-    components.iframe(video_url, height=300)
-
-    # Nota tambahan
-    st.write("""
-    **Nota:**
-    - Pastikan anda menyimpan karangan sebelum menutup aplikasi.
-    - Jika anda mempunyai sebarang pertanyaan, sila rujuk video tutorial di atas.
-    """)
 
 # Fungsi untuk memaparkan borang pendaftaran
 def show_register():
