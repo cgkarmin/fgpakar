@@ -1,7 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import sqlite3
-from database import get_connection
+from database import get_connection  # Mengimpor fungsi dari database.py
 
 # Tetapkan konfigurasi halaman
 st.set_page_config(page_title="Aplikasi Penulisan Karangan", layout="wide")
