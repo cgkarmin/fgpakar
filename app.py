@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from database import get_connection  # Mengimpor fungsi dari database.py
+from auth import register_user, validate_user
 
 # Tetapkan konfigurasi halaman
 st.set_page_config(page_title="Aplikasi Penulisan Karangan", layout="wide")
@@ -58,7 +58,7 @@ if "hasil_karangan_gabungan" not in st.session_state:
 # Fungsi untuk mengemas kini teknik yang dipilih
 def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
-    st.query_params["selected_teknik"] = teknik  # Kemas kini parameter URL
+    st.experimental_set_query_params(selected_teknik=teknik)  # Kemas kini parameter URL
 
 # Susunan Ikon Teknik dalam Satu Baris
 st.subheader("🎨 Pilih Teknik Penulisan")
@@ -83,8 +83,8 @@ for i in range(0, len(ikon_keys), num_cols):
                     pass  # Tiada tindakan tambahan diperlukan
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
-if "selected_teknik" in st.query_params:
-    st.session_state.selected_teknik = st.query_params["selected_teknik"]
+if "selected_teknik" in st.experimental_get_query_params():
+    st.session_state.selected_teknik = st.experimental_get_query_params()["selected_teknik"][0]
 
 # Tata Letak Kolom
 col1, col2 = st.columns([3, 1])  # Kolum kiri lebih lebar daripada kolum kanan
@@ -138,11 +138,11 @@ with col1:
                                 ['link', 'blockquote', 'code-block', 'image'],
                                 ['ordered', 'bullet'],
                                 ['sub', 'super'],
-                                [{{ 'indent': '-1' }}, {{ 'indent': '+1' }}],
-                                [{{ 'direction': 'rtl' }}],
-                                [{{ 'size': ['small', false, 'large', 'huge'] }}],
-                                [{{ 'color': [] }}, {{ 'background': [] }}],
-                                [{{ 'align': [] }}],
+                                {{ 'indent': '-1' }}, {{ 'indent': '+1' }},
+                                {{ 'direction': 'rtl' }},
+                                {{ 'size': ['small', false, 'large', 'huge'] }},
+                                {{ 'color': [] }}, {{ 'background': [] }},
+                                {{ 'align': [] }},
                                 ['clean']
                             ]
                         }}
@@ -273,3 +273,48 @@ with col2:
     - Pastikan anda menyimpan karangan sebelum menutup aplikasi.
     - Jika anda mempunyai sebarang pertanyaan, sila rujuk video tutorial di atas.
     """)
+
+# Fungsi untuk memaparkan borang pendaftaran
+def show_register():
+    st.subheader("Pendaftaran Pengguna Baru")
+    username = st.text_input("Nama Pengguna", key="register_username")
+    password = st.text_input("Kata Laluan", type="password", key="register_password")
+    confirm_password = st.text_input("Sahkan Kata Laluan", type="password", key="register_confirm_password")
+    if st.button("Daftar", key="register_button"):
+        if password == confirm_password:
+            if register_user(username, password):
+                st.success("Pendaftaran berjaya! Sila log masuk.")
+            else:
+                st.error("Nama pengguna sudah wujud.")
+        else:
+            st.error("Kata laluan tidak sepadan.")
+
+# Fungsi untuk memaparkan borang login
+def show_login():
+    st.subheader("Log Masuk Pengguna")
+    username = st.text_input("Nama Pengguna", key="login_username")
+    password = st.text_input("Kata Laluan", type="password", key="login_password")
+    if st.button("Log Masuk", key="login_button"):
+        if validate_user(username, password):
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.success("Log masuk berjaya!")
+        else:
+            st.error("Nama pengguna atau kata laluan tidak sah.")
+
+# Semak status log masuk pengguna
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if st.session_state.logged_in:
+    st.write(f"Selamat datang, {st.session_state.username}!")
+    # Paparkan kandungan aplikasi utama di sini
+    st.write("Ini adalah kandungan aplikasi utama.")
+else:
+    # Paparkan borang pendaftaran dan login
+    st.sidebar.title("Navigasi")
+    option = st.sidebar.selectbox("Pilih", ["Log Masuk", "Pendaftaran"])
+    if option == "Pendaftaran":
+        show_register()
+    else:
+        show_login()
