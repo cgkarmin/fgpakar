@@ -61,8 +61,9 @@ def pilih_teknik(teknik):
     st.experimental_set_query_params(selected_teknik=teknik)  # Kemas kini parameter URL
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
-if "selected_teknik" in st.experimental_get_query_params():
-    st.session_state.selected_teknik = st.experimental_get_query_params()["selected_teknik"][0]
+query_params = st.experimental_get_query_params()
+if "selected_teknik" in query_params:
+    st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
 # Fungsi untuk memaparkan borang pendaftaran
 def show_register():
@@ -121,7 +122,7 @@ else:
 
     # Gunakan iframe untuk memaparkan video YouTube
     video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
-    st.sidebar.components.iframe(video_url, height=300)
+    st.sidebar.components.v1.iframe(video_url, height=300)
 
     # Nota tambahan
     st.sidebar.write("""
