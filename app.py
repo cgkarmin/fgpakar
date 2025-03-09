@@ -212,6 +212,21 @@ with col1:
     rich_text_editor("Peleraian", "peleraian")
     rich_text_editor("Resolusi", "resolusi")
 
+    # Fungsi untuk menggabungkan karangan
+    def gabungkan_karangan():
+        bahagian_plot = [
+            st.session_state.get("hasil_karangan_permulaan", ""),
+            st.session_state.get("hasil_karangan_sub_konflik", ""),
+            st.session_state.get("hasil_karangan_konflik", ""),
+            st.session_state.get("hasil_karangan_sub_kemuncak", ""),
+            st.session_state.get("hasil_karangan_kemuncak", ""),
+            st.session_state.get("hasil_karangan_peleraian", ""),
+            st.session_state.get("hasil_karangan_resolusi", ""),
+        ]
+        # Gabungkan semua bahagian dengan pemisah <br>
+        karangan_gabungan = "<br>".join(bahagian_plot)
+        st.session_state.hasil_karangan_gabungan = karangan_gabungan
+
     # Butang untuk menggabungkan karangan
     if st.button("Gabungkan Karangan"):
         gabungkan_karangan()
@@ -242,18 +257,3 @@ with col2:
     - Pastikan anda menyimpan karangan sebelum menutup aplikasi.
     - Jika anda mempunyai sebarang pertanyaan, sila rujuk video tutorial di atas.
     """)
-
-# Fungsi untuk menggabungkan kandungan plot menjadi satu karangan
-def gabungkan_karangan():
-    bahagian_plot = [
-        st.session_state.get("hasil_karangan_permulaan", ""),
-        st.session_state.get("hasil_karangan_sub_konflik", ""),
-        st.session_state.get("hasil_karangan_konflik", ""),
-        st.session_state.get("hasil_karangan_sub_kemuncak", ""),
-        st.session_state.get("hasil_karangan_kemuncak", ""),
-        st.session_state.get("hasil_karangan_peleraian", ""),
-        st.session_state.get("hasil_karangan_resolusi", ""),
-    ]
-    # Gabungkan semua bahagian dengan pemisah <br>
-    karangan_gabungan = "<br>".join(bahagian_plot)
-    st.session_state.hasil_karangan_gabungan = karangan_gabungan
