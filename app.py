@@ -109,30 +109,51 @@ else:
     else:
         show_login()
 
-# Tata Letak Kolom
-col1, col2 = st.columns([1, 3])  # Kolum kiri lebih sempit daripada kolum kanan
-
-with col1:
-    st.header("Tutorial")
-    st.write("## Selamat Datang ke Aplikasi Penulisan Karangan")
-    st.write("Gunakan editor teks di sebelah kanan untuk menulis karangan Anda.")
-    st.write("Pilih teknik penulisan dari ikon di atas.")
-    st.write("Klik 'Gabungkan Karangan' untuk melihat hasil gabungan.")
+    st.sidebar.header("Tutorial")
+    st.sidebar.write("## Selamat Datang ke Aplikasi Penulisan Karangan")
+    st.sidebar.write("Gunakan editor teks di sebelah kanan untuk menulis karangan Anda.")
+    st.sidebar.write("Pilih teknik penulisan dari ikon di atas.")
+    st.sidebar.write("Klik 'Gabungkan Karangan' untuk melihat hasil gabungan.")
     
     # Video Tutorial dari YouTube
-    st.write("### Video Tutorial")
-    st.write("Tonton video di bawah untuk panduan lengkap:")
+    st.sidebar.write("### Video Tutorial")
+    st.sidebar.write("Tonton video di bawah untuk panduan lengkap:")
 
     # Gunakan iframe untuk memaparkan video YouTube
     video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
-    components.iframe(video_url, height=300)
+    st.sidebar.components.iframe(video_url, height=300)
 
     # Nota tambahan
-    st.write("""
+    st.sidebar.write("""
     **Nota:**
     - Pastikan anda menyimpan karangan sebelum menutup aplikasi.
     - Jika anda mempunyai sebarang pertanyaan, sila rujuk video tutorial di atas.
     """)
+
+# Susunan Ikon Teknik dalam Satu Baris
+st.subheader("🎨 Pilih Teknik Penulisan")
+num_cols = 7  # Maksimum ikon dalam satu baris
+ikon_keys = list(teknik_info.keys())
+
+for i in range(0, len(ikon_keys), num_cols):
+    cols = st.columns(num_cols)
+    for j, col in enumerate(cols):
+        if i + j < len(ikon_keys):
+            teknik = ikon_keys[i + j]
+            info = teknik_info[teknik]
+            with col:
+                # Gunakan butang Streamlit dengan on_click
+                if st.button(
+                    f"{info['ikon']}",
+                    key=f"btn_{teknik}",
+                    help=info["tooltip"],
+                    on_click=pilih_teknik,  # Panggil fungsi pilih_teknik
+                    args=(teknik,),  # Hantar argumen teknik
+                ):
+                    pass  # Tiada tindakan tambahan diperlukan
+
+# Tata Letak Kolom
+col1, col2 = st.columns([1, 3])  # Kolum kiri lebih sempit daripada kolum kanan
 
 with col2:
     # Paparan Teknik yang Dipilih
