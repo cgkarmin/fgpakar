@@ -60,31 +60,54 @@ def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
     st.experimental_set_query_params(selected_teknik=teknik)  # Kemas kini parameter URL
 
-# Susunan Ikon Teknik dalam Satu Baris
-st.subheader("🎨 Pilih Teknik Penulisan")
-num_cols = 7  # Maksimum ikon dalam satu baris
-ikon_keys = list(teknik_info.keys())
-
-for i in range(0, len(ikon_keys), num_cols):
-    cols = st.columns(num_cols)
-    for j, col in enumerate(cols):
-        if i + j < len(ikon_keys):
-            teknik = ikon_keys[i + j]
-            info = teknik_info[teknik]
-            with col:
-                # Gunakan butang Streamlit dengan on_click
-                if st.button(
-                    f"{info['ikon']}",
-                    key=f"btn_{teknik}",
-                    help=info["tooltip"],
-                    on_click=pilih_teknik,  # Panggil fungsi pilih_teknik
-                    args=(teknik,),  # Hantar argumen teknik
-                ):
-                    pass  # Tiada tindakan tambahan diperlukan
-
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
 if "selected_teknik" in st.experimental_get_query_params():
     st.session_state.selected_teknik = st.experimental_get_query_params()["selected_teknik"][0]
+
+# Fungsi untuk memaparkan borang pendaftaran
+def show_register():
+    st.subheader("Pendaftaran Pengguna Baru")
+    username = st.text_input("Nama Pengguna", key="register_username")
+    password = st.text_input("Kata Laluan", type="password", key="register_password")
+    confirm_password = st.text_input("Sahkan Kata Laluan", type="password", key="register_confirm_password")
+    if st.button("Daftar", key="register_button"):
+        if password == confirm_password:
+            if register_user(username, password):
+                st.success("Pendaftaran berjaya! Sila log masuk.")
+            else:
+                st.error("Nama pengguna sudah wujud.")
+        else:
+            st.error("Kata laluan tidak sepadan.")
+
+# Fungsi untuk memaparkan borang login
+def show_login():
+    st.subheader("Log Masuk Pengguna")
+    username = st.text_input("Nama Pengguna", key="login_username")
+    password = st.text_input("Kata Laluan", type="password", key="login_password")
+    if st.button("Log Masuk", key="login_button"):
+        if validate_user(username, password):
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.success("Log masuk berjaya!")
+        else:
+            st.error("Nama pengguna atau kata laluan tidak sah.")
+
+# Semak status log masuk pengguna
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if st.session_state.logged_in:
+    st.write(f"Selamat datang, {st.session_state.username}!")
+    # Paparkan kandungan aplikasi utama di sini
+    st.write("Ini adalah kandungan aplikasi utama.")
+else:
+    # Paparkan borang pendaftaran dan login
+    st.sidebar.title("Navigasi")
+    option = st.sidebar.selectbox("Pilih", ["Log Masuk", "Pendaftaran"])
+    if option == "Pendaftaran":
+        show_register()
+    else:
+        show_login()
 
 # Tata Letak Kolom
 col1, col2 = st.columns([1, 3])  # Kolum kiri lebih sempit daripada kolum kanan
@@ -273,48 +296,3 @@ with col2:
         # Butang untuk menyimpan ke database
         if st.button("Simpan ke Database"):
             simpan_ke_database()
-
-# Fungsi untuk memaparkan borang pendaftaran
-def show_register():
-    st.subheader("Pendaftaran Pengguna Baru")
-    username = st.text_input("Nama Pengguna", key="register_username")
-    password = st.text_input("Kata Laluan", type="password", key="register_password")
-    confirm_password = st.text_input("Sahkan Kata Laluan", type="password", key="register_confirm_password")
-    if st.button("Daftar", key="register_button"):
-        if password == confirm_password:
-            if register_user(username, password):
-                st.success("Pendaftaran berjaya! Sila log masuk.")
-            else:
-                st.error("Nama pengguna sudah wujud.")
-        else:
-            st.error("Kata laluan tidak sepadan.")
-
-# Fungsi untuk memaparkan borang login
-def show_login():
-    st.subheader("Log Masuk Pengguna")
-    username = st.text_input("Nama Pengguna", key="login_username")
-    password = st.text_input("Kata Laluan", type="password", key="login_password")
-    if st.button("Log Masuk", key="login_button"):
-        if validate_user(username, password):
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.success("Log masuk berjaya!")
-        else:
-            st.error("Nama pengguna atau kata laluan tidak sah.")
-
-# Semak status log masuk pengguna
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
-if st.session_state.logged_in:
-    st.write(f"Selamat datang, {st.session_state.username}!")
-    # Paparkan kandungan aplikasi utama di sini
-    st.write("Ini adalah kandungan aplikasi utama.")
-else:
-    # Paparkan borang pendaftaran dan login
-    st.sidebar.title("Navigasi")
-    option = st.sidebar.selectbox("Pilih", ["Log Masuk", "Pendaftaran"])
-    if option == "Pendaftaran":
-        show_register()
-    else:
-        show_login()
