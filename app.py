@@ -122,7 +122,7 @@ else:
 
     # Gunakan iframe untuk memaparkan video YouTube
     video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
-    st.sidebar.components.v1.iframe(video_url, height=300)
+    components.iframe(video_url, height=300)
 
     # Nota tambahan
     st.sidebar.write("""
