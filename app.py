@@ -58,10 +58,10 @@ if "hasil_karangan_gabungan" not in st.session_state:
 # Fungsi untuk mengemas kini teknik yang dipilih
 def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
-    st.query_params["selected_teknik"] = teknik  # Kemas kini parameter URL
+    st.experimental_set_query_params(selected_teknik=teknik)  # Kemas kini parameter URL
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
-query_params = st.query_params  # Jangan gunakan () kerana ia adalah objek, bukan fungsi
+query_params = st.experimental_get_query_params()
 if "selected_teknik" in query_params:
     st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
@@ -110,7 +110,6 @@ else:
     else:
         show_login()
 
-    # Letakkan video tutorial di sidebar
     st.sidebar.header("Tutorial")
     st.sidebar.write("## Selamat Datang ke Aplikasi Penulisan Karangan")
     st.sidebar.write("Gunakan editor teks di sebelah kanan untuk menulis karangan Anda.")
@@ -123,7 +122,7 @@ else:
 
     # Gunakan iframe untuk memaparkan video YouTube di sidebar
     video_url = "https://www.youtube.com/embed/videoseries?list=PLqlP6nt6015H6B0ybLEc_EjkjeuUqQAgE"
-    components.iframe(video_url, height=300)
+    st.sidebar.markdown(f'<iframe width="100%" height="300" src="{video_url}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>', unsafe_allow_html=True)
 
     # Nota tambahan
     st.sidebar.write("""
