@@ -1,5 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import sqlite3
+from database import get_connection
 
 # Tetapkan konfigurasi halaman
 st.set_page_config(page_title="Aplikasi Penulisan Karangan", layout="wide")
@@ -227,6 +229,17 @@ with col1:
         karangan_gabungan = "<br>".join(bahagian_plot)
         st.session_state.hasil_karangan_gabungan = karangan_gabungan
 
+    # Menyimpan karangan ke database
+    def simpan_ke_database():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO karangan (title, content) VALUES (?, ?)
+        ''', (st.session_state.selected_teknik, st.session_state.hasil_karangan_gabungan))
+        conn.commit()
+        conn.close()
+        st.success("Karangan berhasil disimpan ke database!")
+
     # Butang untuk menggabungkan karangan
     if st.button("Gabungkan Karangan"):
         gabungkan_karangan()
@@ -235,6 +248,10 @@ with col1:
     if "hasil_karangan_gabungan" in st.session_state and st.session_state.hasil_karangan_gabungan:
         st.subheader("Hasil Karangan Gabungan")
         st.markdown(st.session_state.hasil_karangan_gabungan, unsafe_allow_html=True)
+        
+        # Butang untuk menyimpan ke database
+        if st.button("Simpan ke Database"):
+            simpan_ke_database()
 
 with col2:
     st.header("Tutorial")
