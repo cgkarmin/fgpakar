@@ -58,10 +58,10 @@ if "hasil_karangan_gabungan" not in st.session_state:
 # Fungsi untuk mengemas kini teknik yang dipilih
 def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
-    st.query_params(selected_teknik=teknik)  # Kemas kini parameter URL
+    st.query_params["selected_teknik"] = teknik  # Kemas kini parameter URL
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
-query_params = st.query_params()
+query_params = st.query_params  # Jangan gunakan () kerana ia adalah objek, bukan fungsi
 if "selected_teknik" in query_params:
     st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
