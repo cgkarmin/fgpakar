@@ -1,3 +1,6 @@
+import sqlite3
+from sqlite3 import Connection
+import hashlib
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -57,7 +60,77 @@ if "hasil_karangan_gabungan" not in st.session_state:
 # Fungsi untuk mengemas kini teknik yang dipilih
 def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
-    st.query_params["selected_teknik"] = teknik  # Kemas kini parameter URL
+    st.experimental_set_query_params(selected_teknik=teknik)
+
+# Semak parameter URL untuk mengemas kini teknik yang dipilih
+query_params = st.experimental_get_query_params()
+if "selected_teknik" in query_params:
+    st.session_state.selected_teknik = query_params["selected_teknik"][0]
+
+# Paparkan teknik yang dipilih
+st.sidebar.title("Pilih Teknik Penulisan")
+for teknik, info in teknik_info.items():
+    if st.sidebar.button(info["ikon"] + " " + teknik, key=teknik):
+        pilih_teknik(teknik)
+
+selected_teknik = st.session_state.selected_teknik
+st.write(f"Teknik yang dipilih: {selected_teknik}")
+st.write(f"Deskripsi: {teknik_info[selected_teknik]['tooltip']}")
+st.write(f"Warna: {teknik_info[selected_teknik]['warna']}")
+
+# Fungsi untuk mendapatkan sambungan ke database
+def get_connection() -> Connection:
+    conn = sqlite3.connect('karangan.db')
+    return conn
+
+# Fungsi untuk membuat jadual pengguna
+def create_user_table():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Fungsi untuk menyulitkan kata laluan
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# Fungsi untuk mendaftar pengguna baru
+def register_user(username: str, password: str) -> bool:
+    conn = get_connection()
+    cursor = conn.cursor()
+    hashed_password = hash_password(password)
+    try:
+        cursor.execute('''
+            INSERT INTO users (username, password) VALUES (?, ?)
+        ''', (username, hashed_password))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+# Fungsi untuk mengesahkan pengguna
+def validate_user(username: str, password: str) -> bool:
+    conn = get_connection()
+    cursor = conn.cursor()
+    hashed_password = hash_password(password)
+    cursor.execute('''
+        SELECT * FROM users WHERE username = ? AND password = ?
+    ''', (username, hashed_password))
+    user = cursor.fetchone()
+    conn.close()
+    return user is not None
+
+# Buat jadual pengguna jika belum wujud
+create_user_table()
 
 # Susunan Ikon Teknik dalam Satu Baris
 st.subheader("🎨 Pilih Teknik Penulisan")
