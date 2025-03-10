@@ -63,7 +63,7 @@ def pilih_teknik(teknik):
     st.experimental_set_query_params(selected_teknik=teknik)
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 if "selected_teknik" in query_params:
     st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
