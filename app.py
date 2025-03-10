@@ -68,15 +68,18 @@ if "selected_teknik" in query_params:
     st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
 # Paparkan teknik yang dipilih
+selected_teknik = st.session_state.selected_teknik
+if selected_teknik in teknik_info:
+    st.write(f"Teknik yang dipilih: {selected_teknik}")
+    st.write(f"Deskripsi: {teknik_info[selected_teknik]['tooltip']}")
+    st.write(f"Warna: {teknik_info[selected_teknik]['warna']}")
+else:
+    st.write("Teknik yang dipilih tidak sah.")
+
 st.sidebar.title("Pilih Teknik Penulisan")
 for teknik, info in teknik_info.items():
     if st.sidebar.button(info["ikon"] + " " + teknik, key=teknik):
         pilih_teknik(teknik)
-
-selected_teknik = st.session_state.selected_teknik
-st.write(f"Teknik yang dipilih: {selected_teknik}")
-st.write(f"Deskripsi: {teknik_info[selected_teknik]['tooltip']}")
-st.write(f"Warna: {teknik_info[selected_teknik]['warna']}")
 
 # Fungsi untuk mendapatkan sambungan ke database
 def get_connection() -> Connection:
