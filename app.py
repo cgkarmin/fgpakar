@@ -60,7 +60,7 @@ if "hasil_karangan_gabungan" not in st.session_state:
 # Fungsi untuk mengemas kini teknik yang dipilih
 def pilih_teknik(teknik):
     st.session_state.selected_teknik = teknik
-    st.query_params.update(selected_teknik=teknik)
+    st.experimental_set_query_params(selected_teknik=teknik)
 
 # Semak parameter URL untuk mengemas kini teknik yang dipilih
 query_params = st.query_params
