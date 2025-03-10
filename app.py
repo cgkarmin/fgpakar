@@ -67,20 +67,6 @@ query_params = st.query_params
 if "selected_teknik" in query_params:
     st.session_state.selected_teknik = query_params["selected_teknik"][0]
 
-# Paparkan teknik yang dipilih
-selected_teknik = st.session_state.selected_teknik
-if selected_teknik in teknik_info:
-    st.write(f"Teknik yang dipilih: {selected_teknik}")
-    st.write(f"Deskripsi: {teknik_info[selected_teknik]['tooltip']}")
-    st.write(f"Warna: {teknik_info[selected_teknik]['warna']}")
-else:
-    st.write("Teknik yang dipilih tidak sah.")
-
-st.sidebar.title("Pilih Teknik Penulisan")
-for teknik, info in teknik_info.items():
-    if st.sidebar.button(info["ikon"] + " " + teknik, key=teknik):
-        pilih_teknik(teknik)
-
 # Fungsi untuk mendapatkan sambungan ke database
 def get_connection() -> Connection:
     conn = sqlite3.connect('karangan.db')
@@ -134,6 +120,30 @@ def validate_user(username: str, password: str) -> bool:
 
 # Buat jadual pengguna jika belum wujud
 create_user_table()
+
+# Sidebar untuk Login/Daftar dan Buka Fail
+with st.sidebar:
+    st.title("Login/Daftar")
+    username = st.text_input("Nama Pengguna")
+    password = st.text_input("Kata Laluan", type="password")
+    if st.button("Log Masuk"):
+        if validate_user(username, password):
+            st.success("Log masuk berjaya")
+        else:
+            st.error("Log masuk gagal")
+    if st.button("Daftar"):
+        if register_user(username, password):
+            st.success("Pendaftaran berjaya")
+        else:
+            st.error("Pendaftaran gagal")
+
+    st.title("Buka Fail")
+    uploaded_file = st.file_uploader("Pilih fail karangan", type=["txt"])
+    if uploaded_file is not None:
+        content = uploaded_file.read().decode("utf-8")
+        st.session_state["file_content"] = content
+    if "file_content" in st.session_state:
+        st.text_area("Kandungan Fail", st.session_state["file_content"], height=200)
 
 # Susunan Ikon Teknik dalam Satu Baris
 st.subheader("🎨 Pilih Teknik Penulisan")
